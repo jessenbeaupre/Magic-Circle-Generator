@@ -51,17 +51,32 @@ def textCircleCenter():
 
 
 def starCenter():
+    points = randint(3, 8)
+    if points % 2 == 0:
+        points += 1
+    oldx = int(imageSize/2) + int(imageSize * 0.3) * math.sin(2 * math.pi)
+    oldy = int(imageSize/2) + int(imageSize * 0.3) * math.cos(2 * math.pi)
+    currentSequence = points
 
-    oldx = int(imageSize/2) + int(imageSize * 0.3) * math.sin(2 * math.pi * 5 / 5)
-    oldy = int(imageSize/2) + int(imageSize * 0.3) * math.cos(2 * math.pi * 5 / 5)
-    sequence = (2, 4, 1, 3, 5)
-
-    for i in range(len(sequence)):
-        newx = int(imageSize/2) + int(imageSize * 0.3) * math.sin(2 * math.pi * sequence[i] / 5)
-        newy = int(imageSize/2) + int(imageSize * 0.3) * math.cos(2 * math.pi * sequence[i] / 5)
+    for i in range(points):
+        currentSequence = currentSequence + 2
+        if currentSequence > points:
+            currentSequence -= points
+        newx = int(imageSize/2) + int(imageSize * 0.3) * math.sin(2 * math.pi * currentSequence / points)
+        newy = int(imageSize/2) + int(imageSize * 0.3) * math.cos(2 * math.pi * currentSequence / points)
         d.line((oldx, oldy, (newx, newy)), fill=(0, 0, 0), width=int(imageSize / 80))
         oldx = newx
         oldy = newy
+
+def concentericCircles():
+    iterator = 0.8
+    concentricCircleRadius = imageSize * 0.3
+    imageMiddle = imageSize / 2
+    while concentricCircleRadius > imageSize * 0.001:
+
+        d.ellipse(((imageMiddle - concentricCircleRadius, imageMiddle - concentricCircleRadius), (imageMiddle + concentricCircleRadius, imageMiddle + concentricCircleRadius))\
+                  , fill=None, outline = (0 ,0 ,0), width=int(concentricCircleRadius * 0.05))
+        concentricCircleRadius *= 0.9
 
 def generateText(minLetter, maxLetter):
     get_char = chr
@@ -98,7 +113,7 @@ im = Image.new("RGBA", (imageSize, imageSize), (args.background[0], args.backgro
 # sets up drawing
 d = ImageDraw.Draw(im, "RGBA")
 
-# draws inner and outer circle based on image size
+# draws outer and inner circle based on image size
 d.ellipse(((imageSize * 0.10, imageSize * 0.10), (imageSize * 0.90, imageSize * 0.90)), fill=None, outline=(0, 0, 0), width=int(imageSize / 80))
 d.ellipse(((imageSize * 0.2, imageSize * 0.2), (imageSize * 0.8, imageSize * 0.8)), fill=None, outline=(0, 0, 0), width=int(imageSize / 80))
 
@@ -119,10 +134,11 @@ for i in range(len(text)):
 switcher = {
     1:circleCenter,
     2:textCircleCenter,
-    3:starCenter
+    3:starCenter,
+    4:concentericCircles
 }
-innerStyleFunction = switcher.get(randint(1, 3))
+innerStyleFunction = switcher.get(randint(1, 4))
 innerStyleFunction()
 
 # saves the image
-im.save("test.png")
+im.save("magicCircle.png")
